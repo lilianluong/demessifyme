@@ -77,9 +77,11 @@ def embed_document(text):
         text = text.replace(number, " $number ")
     tokens = word_tokenize(text)
     embedding = np.zeros((300,))
+    num_tokens = 0
     for token in tokens:
         if token in eng_stopwords:
             continue
+        num_tokens += 1
         if token not in model:
             # token doesn't exist in the model, for now skip
             # future approach: generate random vector and save it
@@ -89,7 +91,7 @@ def embed_document(text):
             embedding += custom_model[token]
             continue
         embedding += model[token]
-    return embedding
+    return embedding / num_tokens
 
 
 model, custom_model, eng_stopwords = load_models()
