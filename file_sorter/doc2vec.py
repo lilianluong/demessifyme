@@ -11,12 +11,12 @@ from string import punctuation
 
 def load_models():
     t0 = time.time()
-    with open("./data/model.pkl", "rb") as f:
+    with open("./model/model.pkl", "rb") as f:
         model = pkl.load(f)
     print("Model loaded in", time.time() - t0, "seconds")
 
     t0 = time.time()
-    with open("./data/custom_model.pkl", "rb") as f:
+    with open("./model/custom_model.pkl", "rb") as f:
         custom_model = pkl.load(f)
     print("Custom model loaded in", time.time() - t0, "seconds")
 
