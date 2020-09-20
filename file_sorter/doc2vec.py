@@ -1,31 +1,28 @@
 import docx
 import fitz
 import numpy as np
+import os
 import pickle as pkl
 import time
 
 from collections import Counter
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
+# from nltk.tokenize import word_tokenize
 from string import punctuation
 
 
 def load_models():
     t0 = time.time()
-    with open("./model/model.pkl", "rb") as f:
+    real_path = os.path.dirname(os.path.realpath(__file__))
+    with open(os.path.join(real_path, "model/model.pkl"), "rb") as f:
         model = pkl.load(f)
     print("Model loaded in", time.time() - t0, "seconds")
-
-    t0 = time.time()
-    with open("./model/custom_model.pkl", "rb") as f:
-        custom_model = pkl.load(f)
-    print("Custom model loaded in", time.time() - t0, "seconds")
 
     # Load stopwords from nltk
     eng_stopwords = stopwords.words('english')
     print("Loaded list of English stopwords")
 
-    return model, custom_model, eng_stopwords
+    return model, {}, eng_stopwords
 
 
 class DocReader:
