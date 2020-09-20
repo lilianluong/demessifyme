@@ -62,7 +62,7 @@ def read_file(filepath):
         "txt": DocReader.read_txt
     }[file_extension]
     text = read_func(filepath)
-    text += (" " + filepath.split("/")[-1]) * 8  # weigh file name
+    text += (" " + (".".join(filepath.split(".")[:-1])).split("/")[-1]) * 15  # weigh file name
     return text
 
 
@@ -115,8 +115,8 @@ def get_folder_name(folders):
     :return: String, name of folder
     """
     num_misc = 0
-    names = {}
-    for folder in folders:
+    names = {"misc": folders[0]}
+    for folder in folders[1:]:
         tokens = tokenize("\n".join([read_file(filepath) for filepath in folder]))
         tokens = [t for t in tokens if t not in eng_stopwords]
         found = False
