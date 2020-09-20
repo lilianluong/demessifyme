@@ -4,8 +4,8 @@ import numpy as np
 import pickle as pkl
 import time
 
+from collections import Counter
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 from string import punctuation
 
 
@@ -61,7 +61,24 @@ def read_file(filepath):
         "pdf": DocReader.read_pdf,
         "txt": DocReader.read_txt
     }[file_extension]
-    return read_func(filepath)
+    text = read_func(filepath)
+    text += (" " + filepath.split("/")[-1]) * 8  # weigh file name
+    return text
+
+
+def tokenize(text):
+    """
+    Split text into tokens, removing punctuation and replacing numbers with $number tokens.
+
+    :param text: text to tokenize
+    :return: list of tokens
+    """
+    for punc in punctuation:
+        text = text.replace(punc, " ")
+    for number in "0123456789":
+        text = text.replace(number, " $number ")
+    tokens = [("$number" if s.isnumeric() else s) for s in text.lower().split()]
+    return tokens
 
 
 def embed_document(text):
@@ -71,11 +88,7 @@ def embed_document(text):
     :param text: String, text to embed
     :return: numpy array with shape=(300,), dtype=np.float
     """
-    for punc in punctuation:
-        text = text.replace(punc, " ")
-    for number in "0123456789":
-        text = text.replace(number, " $number ")
-    tokens = word_tokenize(text)
+    tokens = tokenize(text)
     embedding = np.zeros((300,))
     num_tokens = 0
     for token in tokens:
@@ -92,6 +105,33 @@ def embed_document(text):
             continue
         embedding += model[token]
     return embedding / num_tokens
+
+
+def get_folder_name(folders):
+    """
+    Given a list of folders of files, choose a token to name the folder.
+
+    :param folders: list of lists of filenames
+    :return: String, name of folder
+    """
+    num_misc = 0
+    names = {}
+    for folder in folders:
+        tokens = tokenize("\n".join([read_file(filepath) for filepath in folder]))
+        tokens = [t for t in tokens if t not in eng_stopwords]
+        found = False
+        for (key, freq) in Counter(tokens).most_common():
+            if freq < 10:
+                break
+            if key != "$number" and len(key) > 2:
+                names[key] = folder
+                found = True
+                break
+        if not found:
+            names["untitled" + str(num_misc + 1)] = folder
+            num_misc += 1
+
+    return names
 
 
 model, custom_model, eng_stopwords = load_models()
