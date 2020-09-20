@@ -1,4 +1,4 @@
-#! python
+#! python3
 from file_read_write import get_file_embeddings, write_folders
 from clustering import cluster, cluster_indices, create_folder
 from sklearn.cluster import DBSCAN, MeanShift, Birch, AffinityPropagation, AgglomerativeClustering
