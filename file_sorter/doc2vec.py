@@ -63,7 +63,7 @@ def read_file(filepath):
         "txt": DocReader.read_txt
     }[file_extension]
     text = read_func(filepath)
-    text += (" " + (".".join(filepath.split(".")[:-1])).split("/")[-1]) * 2  # weigh file name
+    text += (" " + (".".join(filepath.split(".")[:-1])).split("/")[-1]) * 15  # weigh file name
     return text
 
 
