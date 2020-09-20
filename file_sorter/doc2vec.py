@@ -6,6 +6,7 @@ import time
 
 from collections import Counter
 from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 from string import punctuation
 
 
@@ -62,7 +63,7 @@ def read_file(filepath):
         "txt": DocReader.read_txt
     }[file_extension]
     text = read_func(filepath)
-    text += (" " + (".".join(filepath.split(".")[:-1])).split("/")[-1]) * 12  # weigh file name
+    text += (" " + (".".join(filepath.split(".")[:-1])).split("/")[-1]) * 2  # weigh file name
     return text
 
 
@@ -75,8 +76,9 @@ def tokenize(text):
     """
     for punc in punctuation:
         text = text.replace(punc, " ")
-    for number in "0123456789":
-        text = text.replace(number, " $number ")
+    # for number in "0123456789":
+    #     text = text.replace(number, " number ")
+    # tokens = word_tokenize(text)
     tokens = [("$number" if s.isnumeric() else s) for s in text.lower().split()]
     return tokens
 
